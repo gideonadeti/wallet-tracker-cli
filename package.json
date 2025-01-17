@@ -25,9 +25,11 @@
   "homepage": "https://github.com/gideonadeti/wallet-tracker-cli#readme",
   "devDependencies": {
     "@types/node": "^22.10.7",
+    "@types/readline-sync": "^1.4.8",
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "readline-sync": "^1.4.10"
   }
 }
