@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A CLI tool for tracking your wallet",
   "main": "dist/index.js",
+  "bin": {
+    "wallet": "dist/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc -w",
@@ -23,5 +26,8 @@
   "devDependencies": {
     "@types/node": "^22.10.7",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "commander": "^13.0.0"
   }
 }
