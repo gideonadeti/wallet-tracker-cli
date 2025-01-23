@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
-import path from "path";
 import { Command } from "commander";
 
-import { Database } from "./utils/database";
-import { formatAddResponse } from "./utils/format-response";
-import { validateAmount } from "./utils/validate-amount";
-import { handleInvalidCategory } from "./utils/handle-invalid-category";
+import db from "./lib/database";
+import {
+  exitProcess,
+  getAmount,
+  getCategoryType,
+  getOrAddCategory,
+  logAddMessage,
+} from "./utils";
 
 const program = new Command();
-const dbPath = path.join(__dirname, "db.json");
-const db = new Database(dbPath);
 
 // Metadata
 program
@@ -29,46 +30,36 @@ program
   .requiredOption("-c, --category <category>", "Category of the record")
   .option("-d, --description <description>", "Description of the record", "")
   .action((options) => {
-    const data = db.readData();
-    const categories = data.categories;
-    const amount = validateAmount(options.amount);
-    const category = options.category.toLowerCase();
-    const description = options.description || "";
+    let amount: number | undefined = parseFloat(options.amount);
+    const categoryName: string = options.category.toLowerCase();
+    const description: string = options.description || "";
 
-    if (!amount) {
-      console.error("Invalid amount. Please enter a valid number.");
-      process.exit(1);
+    if (isNaN(amount)) {
+      console.log(`"${options.amount}" is an invalid amount.`);
+
+      amount = getAmount();
+
+      if (!amount) {
+        exitProcess();
+      }
     }
 
-    const type = amount > 0 ? "income" : "expense";
+    const categoryType = getCategoryType(amount as number);
+    let category = db.readCategoryByName(categoryName, categoryType);
 
-    // Check if category exists, prompt to add if not
-    if (!categories[type].includes(category)) {
-      handleInvalidCategory(categories, category, type);
+    if (!category) {
+      console.log(`"${categoryName}" is an invalid ${categoryType} category`);
+
+      category = getOrAddCategory(categoryName, categoryType);
+
+      if (!category) {
+        exitProcess();
+      }
     }
 
-    const newRecord = {
-      id: data.records.length
-        ? data.records[data.records.length - 1].id + 1
-        : 1,
-      amount,
-      category,
-      description,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    const record = db.createRecord(amount as number, category!.id, description);
 
-    data.records.push(newRecord);
-    db.writeData(data);
-
-    console.log(
-      formatAddResponse(
-        newRecord.id,
-        newRecord.amount,
-        newRecord.category,
-        newRecord.description || undefined
-      )
-    );
+    logAddMessage(record, category!.name);
   });
 
 program.parse(process.argv);

@@ -7,6 +7,6 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/lib/database.ts"],
   "exclude": ["node_modules"]
 }
