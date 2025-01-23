@@ -10,10 +10,49 @@ export class Database {
   public readData(): any {
     if (!fs.existsSync(this.dbPath)) {
       return {
-        metadata: { currency: "USD" },
+        metadata: {
+          currency: {
+            code: "USD",
+            symbol: "$",
+          },
+        },
         categories: {
-          expense: ["food", "rent", "transportation", "other"],
-          income: ["salary", "business", "investments", "other"],
+          expense: [
+            {
+              id: "e1",
+              name: "food",
+            },
+            {
+              id: "e2",
+              name: "rent",
+            },
+            {
+              id: "e3",
+              name: "transportation",
+            },
+            {
+              id: "e4",
+              name: "other",
+            },
+          ],
+          income: [
+            {
+              id: "i1",
+              name: "salary",
+            },
+            {
+              id: "i2",
+              name: "business",
+            },
+            {
+              id: "i3",
+              name: "investments",
+            },
+            {
+              id: "i4",
+              name: "other",
+            },
+          ],
         },
         records: [],
       };
