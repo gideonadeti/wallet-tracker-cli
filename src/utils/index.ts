@@ -19,15 +19,15 @@ export function getRecordId(records: Record[]) {
 export function logAddMessage(record: Record, categoryName: string) {
   const currency = db.readCurrency();
 
-  let message = `A record with an amount of ${
+  let message = `A record with an amount of ${record.amount < 0 ? "-" : ""}${
     currency.symbol
-  }${record.amount.toFixed(2)}`;
+  }${Math.abs(record.amount).toFixed(2)}`;
 
   if (record.description) {
     message += ` and description '${record.description}'`;
   }
 
-  message += ` has been added to the '${categoryName}' category.\nUse ID ${record.id} to view, edit, or delete this record in the future.`;
+  message += ` has been added to the '${categoryName}' category.\nYou can use the record's ID of '${record.id}' to view, edit, or delete it.`;
 
   console.log(message);
 }
