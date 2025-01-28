@@ -8,7 +8,6 @@ export function getCategoryType(amount: number) {
 }
 
 export function exitProcess() {
-  console.error("Operation cancelled. No record added.");
   process.exit(0);
 }
 
@@ -54,7 +53,10 @@ export function getAmount() {
   return amount;
 }
 
-export function getOrAddCategory(categoryName: string, type: string) {
+export function getOrAddCategory(
+  categoryName: string,
+  type: "expense" | "income"
+) {
   const categories = db.readCategories(type);
 
   if (categories.length === 0) {
@@ -103,4 +105,26 @@ export function getOrAddCategory(categoryName: string, type: string) {
       return categories[response - 1];
     }
   }
+}
+
+export function getRecordIdFromUser() {
+  let recordId: number;
+
+  do {
+    const response = readlineSync.question(
+      "Enter a valid record ID or 'q' to quit: "
+    );
+
+    if (response.toLowerCase() === "q") {
+      return;
+    }
+
+    recordId = parseInt(response, 10);
+
+    if (isNaN(recordId)) {
+      console.log(`"${response}" is an invalid record ID.`);
+    }
+  } while (isNaN(recordId));
+
+  return recordId;
 }

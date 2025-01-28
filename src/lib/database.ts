@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { randomUUID } from "crypto";
 
-import { Category, CategoryCollection } from "../types";
+import { Category, CategoryCollection, Currency, Record } from "../types";
 import { getRecordId } from "../utils";
 
 export class Database {
@@ -68,7 +68,7 @@ export class Database {
 
     this.writeData(data);
 
-    return record;
+    return record as Record;
   }
 
   public createCategory(name: string, type: string) {
@@ -84,7 +84,7 @@ export class Database {
 
     this.writeData(data);
 
-    return category;
+    return category as Category;
   }
 
   public readCategoryByName(name: string, type: "expense" | "income") {
@@ -94,21 +94,36 @@ export class Database {
       (category: Category) => category.name === name
     );
 
-    return foundCategory;
+    return foundCategory as Category;
   }
 
-  public readCategories(type: string) {
+  public readCategories(type: "expense" | "income") {
     const data = this.readData();
-    const categoryCollection: CategoryCollection = data.categoryCollection;
+    const categoryCollection = data.categoryCollection;
 
-    return categoryCollection[type];
+    return categoryCollection[type] as Category[];
   }
 
   public readCurrency() {
     const data = this.readData();
     const currency = data.currency;
 
-    return currency;
+    return currency as Currency;
+  }
+
+  public readRecord(id: number) {
+    const data = this.readData();
+    const records = data.records;
+    const record = records.find((record: any) => record.id === id);
+
+    return record as Record;
+  }
+
+  public readRecords() {
+    const data = this.readData();
+    const records = data.records;
+
+    return records as Record[];
   }
 }
 

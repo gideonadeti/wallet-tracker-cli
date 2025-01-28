@@ -3,11 +3,13 @@
 import { Command } from "commander";
 
 import db from "./lib/database";
+import { Category } from "./types";
 import {
   exitProcess,
   getAmount,
   getCategoryType,
   getOrAddCategory,
+  getRecordIdFromUser,
   logAddMessage,
 } from "./utils";
 
@@ -45,7 +47,10 @@ program
     }
 
     const categoryType = getCategoryType(amount as number);
-    let category = db.readCategoryByName(categoryName, categoryType);
+    let category: Category | undefined = db.readCategoryByName(
+      categoryName,
+      categoryType
+    );
 
     if (!category) {
       console.log(`"${categoryName}" is an invalid ${categoryType} category`);
@@ -60,6 +65,47 @@ program
     const record = db.createRecord(amount as number, category!.id, description);
 
     logAddMessage(record, category!.name);
+  });
+
+// View
+program
+  .command("view")
+  .description("View all records or a specific one by ID")
+  .option("-i, --id <id>", "ID of a record")
+  .action((options) => {
+    if (options.id) {
+      let recordId: number | undefined = parseInt(options.id);
+
+      if (isNaN(recordId)) {
+        console.log(`"${options.id}" is an invalid ID.`);
+
+        recordId = getRecordIdFromUser();
+
+        if (!recordId) {
+          exitProcess();
+        }
+      }
+
+      const record = db.readRecord(recordId as number);
+
+      if (!record) {
+        console.log(`Record with ID '${options.id}' not found.`);
+
+        exitProcess();
+      }
+
+      console.table(record);
+    } else {
+      const records = db.readRecords();
+
+      if (records.length === 0) {
+        console.log("No records found.");
+
+        return;
+      }
+
+      console.table(records);
+    }
   });
 
 program.parse(process.argv);
