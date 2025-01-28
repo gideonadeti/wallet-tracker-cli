@@ -32,7 +32,7 @@ program
   .action((options) => {
     let amount: number | undefined = parseFloat(options.amount);
     const categoryName: string = options.category.toLowerCase();
-    const description: string = options.description || "";
+    const description: string = options.description;
 
     if (isNaN(amount)) {
       console.log(`"${options.amount}" is an invalid amount.`);
