@@ -125,6 +125,28 @@ export class Database {
 
     return records as Record[];
   }
+
+  public updateRecord(
+    id: number,
+    amount: number,
+    categoryId: string,
+    description: string
+  ) {
+    const data = this.readData();
+    const records = data.records;
+    const record = records.find((record: Record) => record.id === id);
+
+    if (record) {
+      record.amount = amount;
+      record.categoryId = categoryId;
+      record.description = description;
+      record.updatedAt = new Date().toISOString();
+
+      this.writeData(data);
+
+      return record as Record;
+    }
+  }
 }
 
 const db = new Database();

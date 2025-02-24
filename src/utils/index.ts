@@ -128,3 +128,21 @@ export function getRecordIdFromUser() {
 
   return recordId;
 }
+
+export const logEditMessage = (updateRecord: Record, categoryName: string) => {
+  const currency = db.readCurrency();
+
+  let message = `A record with an ID of '${
+    updateRecord.id
+  }' has been edited. It now has an amount of ${
+    updateRecord.amount < 0 ? "-" : ""
+  }${currency.symbol}${Math.abs(updateRecord.amount).toFixed(2)}`;
+
+  if (updateRecord.description) {
+    message += ` and description '${updateRecord.description}'`;
+  }
+
+  message += ` in the '${categoryName}' category.`;
+
+  console.log(message);
+};
